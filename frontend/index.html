@@ -6,7 +6,24 @@
     <title>Rock Paper Scissors</title>
 </head>
 <body>
-    <script src="app.js"></script>
-    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+  <div id="login">
+    <h2>Enter your username to play</h2>
+    <input type="text" id="username" placeholder="Your name" />
+    <button id="loginBtn">Start Playing</button>
+  </div>
+
+  <div id="game" style="display: none;">
+    <!-- Your existing game UI here -->
+    <h1>Rock Paper Scissors</h1>
+    <button id="rock">Rock</button>
+    <button id="paper">Paper</button>
+    <button id="scissors">Scissors</button>
+    <div id="result"></div>
+    <div id="score"></div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+  <script src="app.js"></script>
+  
 </body>
 </html>
