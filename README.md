@@ -3,8 +3,7 @@
 Welcome to **RGB Arena** – a full‑stack, real‑time multiplayer Rock Paper Scissors game!  
 Two players can connect, enter usernames, and play rounds instantly. Scores are persisted in a database, and the vibrant red‑green‑blue gradient theme makes the experience pop.
 
-![Game Screenshot](link-to-screenshot-if-available)  
-*(Add a screenshot of your game here)*
+![Game Screenshot](/game%20screenshot/screenshot.png) 
 
 ---
 
@@ -92,7 +91,7 @@ node server.js
 * Open the frontend folder. You can serve the frontend using Live Server (recommended) or any static server.
 
 * If using VS Code Live Server, right‑click index.html and choose Open with Live Server.
-The app will open at http://127.0.0.1:5500 (or http://localhost:5500).
+The app will open at http://127.0.0.1:5500 (or http://localhost:3000).
 
 * Alternatively, you can open index.html directly, but some browsers may block WebSocket connections due to CORS. Live Server is strongly recommended.
 
