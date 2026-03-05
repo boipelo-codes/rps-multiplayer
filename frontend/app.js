@@ -20,7 +20,10 @@ loginBtn.addEventListener('click', async () => {
   if (!username) return alert('Please enter a name');
 
   try {
+<<<<<<< HEAD
     // Register/login with backend
+=======
+>>>>>>> 2cfe7e8 (Convert frontend submodule to regular folder)
     const response = await fetch('http://localhost:3000/api/users', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -28,6 +31,7 @@ loginBtn.addEventListener('click', async () => {
     });
     currentUser = await response.json();
 
+<<<<<<< HEAD
     // Hide login, show game
     loginDiv.style.display = 'none';
     gameDiv.style.display = 'block';
@@ -36,6 +40,12 @@ loginBtn.addEventListener('click', async () => {
     scoreDiv.innerHTML = `Wins: ${currentUser.wins} | Losses: ${currentUser.losses}`;
 
     // Tell server we're ready to play
+=======
+    loginDiv.style.display = 'none';
+    gameDiv.style.display = 'block';
+    scoreDiv.innerHTML = `Wins: ${currentUser.wins} | Losses: ${currentUser.losses}`;
+
+>>>>>>> 2cfe7e8 (Convert frontend submodule to regular folder)
     socket.emit('ready', currentUser.username);
   } catch (err) {
     console.error('Login failed:', err);
@@ -47,11 +57,19 @@ loginBtn.addEventListener('click', async () => {
 socket.on('gameStart', (data) => {
   opponentName = data.opponent;
   currentRoom = data.room;
+<<<<<<< HEAD
   myRole = data.myRole; // store our role
   resultDiv.innerHTML = `Game started! You are playing against ${opponentName}`;
 });
 
 // Handle move buttons
+=======
+  myRole = data.myRole;
+  resultDiv.innerHTML = `Game started! You are playing against ${opponentName}`;
+});
+
+// Move buttons
+>>>>>>> 2cfe7e8 (Convert frontend submodule to regular folder)
 document.getElementById('rock').addEventListener('click', () => makeMove('rock'));
 document.getElementById('paper').addEventListener('click', () => makeMove('paper'));
 document.getElementById('scissors').addEventListener('click', () => makeMove('scissors'));
@@ -64,11 +82,18 @@ function makeMove(choice) {
   socket.emit('move', { choice, room: currentRoom });
 }
 
+<<<<<<< HEAD
 // Listen for round result and update display + scores
 socket.on('roundResult', async (data) => {
   const { p1Choice, p2Choice, winner } = data;
 
   // Determine winner message based on our role
+=======
+// Round result
+socket.on('roundResult', async (data) => {
+  const { p1Choice, p2Choice, winner } = data;
+
+>>>>>>> 2cfe7e8 (Convert frontend submodule to regular folder)
   let winnerMessage = '';
   if (winner === 'tie') {
     winnerMessage = "It's a tie!";
@@ -84,7 +109,10 @@ socket.on('roundResult', async (data) => {
     <strong>${winnerMessage}</strong>
   `;
 
+<<<<<<< HEAD
   // Fetch updated user stats
+=======
+>>>>>>> 2cfe7e8 (Convert frontend submodule to regular folder)
   try {
     const response = await fetch(`http://localhost:3000/api/users/${currentUser.username}`);
     const updatedUser = await response.json();
@@ -95,6 +123,7 @@ socket.on('roundResult', async (data) => {
   }
 });
 
+<<<<<<< HEAD
 // Handle opponent disconnect
 socket.on('opponentDisconnected', () => {
   resultDiv.innerHTML = 'Opponent left the game. Please refresh to play again.';
@@ -102,6 +131,15 @@ socket.on('opponentDisconnected', () => {
 });
 
 // Handle connection errors
+=======
+// Opponent disconnect
+socket.on('opponentDisconnected', () => {
+  resultDiv.innerHTML = 'Opponent left the game. Please refresh to play again.';
+  currentRoom = null;
+});
+
+// Connection error
+>>>>>>> 2cfe7e8 (Convert frontend submodule to regular folder)
 socket.on('connect_error', (err) => {
   console.error('Connection error:', err.message);
   alert('Cannot connect to server. Make sure the backend is running.');
