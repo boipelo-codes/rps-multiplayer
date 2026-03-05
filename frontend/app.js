@@ -12,135 +12,95 @@ const scoreDiv = document.getElementById('score');
 let currentUser = null;
 let currentRoom = null;
 let opponentName = '';
-let myRole = null; // 'player1' or 'player2'
+let myRole = null; 
 
-// Login button click
+// Login logic
 loginBtn.addEventListener('click', async () => {
-  const username = usernameInput.value.trim();
-  if (!username) return alert('Please enter a name');
+    const username = usernameInput.value.trim();
+    if (!username) return alert('Please enter a name');
 
-  try {
-<<<<<<< HEAD
-    // Register/login with backend
-=======
->>>>>>> 2cfe7e8 (Convert frontend submodule to regular folder)
-    const response = await fetch('http://localhost:3000/api/users', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username })
-    });
-    currentUser = await response.json();
+    try {
+        const response = await fetch('http://localhost:3000/api/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username })
+        });
+        
+        if (!response.ok) throw new Error('User fetch failed');
+        
+        currentUser = await response.json();
 
-<<<<<<< HEAD
-    // Hide login, show game
-    loginDiv.style.display = 'none';
-    gameDiv.style.display = 'block';
+        loginDiv.style.display = 'none';
+        gameDiv.style.display = 'block';
 
-    // Display initial score
-    scoreDiv.innerHTML = `Wins: ${currentUser.wins} | Losses: ${currentUser.losses}`;
-
-    // Tell server we're ready to play
-=======
-    loginDiv.style.display = 'none';
-    gameDiv.style.display = 'block';
-    scoreDiv.innerHTML = `Wins: ${currentUser.wins} | Losses: ${currentUser.losses}`;
-
->>>>>>> 2cfe7e8 (Convert frontend submodule to regular folder)
-    socket.emit('ready', currentUser.username);
-  } catch (err) {
-    console.error('Login failed:', err);
-    alert('Failed to login. Check console.');
-  }
+        updateScoreDisplay(currentUser.wins, currentUser.losses);
+        socket.emit('ready', currentUser.username);
+    } catch (err) {
+        console.error('Login failed:', err);
+        alert('Failed to login. Check if backend is running at :3000');
+    }
 });
 
-// Listen for game start
-socket.on('gameStart', (data) => {
-  opponentName = data.opponent;
-  currentRoom = data.room;
-<<<<<<< HEAD
-  myRole = data.myRole; // store our role
-  resultDiv.innerHTML = `Game started! You are playing against ${opponentName}`;
-});
-
-// Handle move buttons
-=======
-  myRole = data.myRole;
-  resultDiv.innerHTML = `Game started! You are playing against ${opponentName}`;
-});
-
-// Move buttons
->>>>>>> 2cfe7e8 (Convert frontend submodule to regular folder)
-document.getElementById('rock').addEventListener('click', () => makeMove('rock'));
-document.getElementById('paper').addEventListener('click', () => makeMove('paper'));
-document.getElementById('scissors').addEventListener('click', () => makeMove('scissors'));
-
-function makeMove(choice) {
-  if (!currentRoom) {
-    alert('Waiting for an opponent...');
-    return;
-  }
-  socket.emit('move', { choice, room: currentRoom });
+function updateScoreDisplay(wins, losses) {
+    scoreDiv.innerHTML = `Wins: ${wins} | Losses: ${losses}`;
 }
 
-<<<<<<< HEAD
-// Listen for round result and update display + scores
+socket.on('gameStart', (data) => {
+    opponentName = data.opponent;
+    currentRoom = data.room;
+    myRole = data.myRole; 
+    resultDiv.innerHTML = `Game started! Playing against <strong>${opponentName}</strong>. Make your move!`;
+});
+
+// Move handling
+['rock', 'paper', 'scissors'].forEach(id => {
+    document.getElementById(id).addEventListener('click', () => makeMove(id));
+});
+
+function makeMove(choice) {
+    if (!currentRoom) return alert('Waiting for an opponent...');
+    
+    // Visual feedback that move was sent
+    resultDiv.innerHTML = `You chose ${choice}. Waiting for opponent...`;
+    socket.emit('move', { choice, room: currentRoom });
+}
+
 socket.on('roundResult', async (data) => {
-  const { p1Choice, p2Choice, winner } = data;
+    const { p1Choice, p2Choice, winner } = data;
 
-  // Determine winner message based on our role
-=======
-// Round result
-socket.on('roundResult', async (data) => {
-  const { p1Choice, p2Choice, winner } = data;
+    // FIX: Determine what "I" chose and what the "Opponent" chose based on myRole
+    const myChoice = (myRole === 'player1') ? p1Choice : p2Choice;
+    const oppChoice = (myRole === 'player1') ? p2Choice : p1Choice;
 
->>>>>>> 2cfe7e8 (Convert frontend submodule to regular folder)
-  let winnerMessage = '';
-  if (winner === 'tie') {
-    winnerMessage = "It's a tie!";
-  } else if (winner === 'player1') {
-    winnerMessage = (myRole === 'player1') ? 'You win!' : 'Opponent wins!';
-  } else if (winner === 'player2') {
-    winnerMessage = (myRole === 'player2') ? 'You win!' : 'Opponent wins!';
-  }
+    let winnerMessage = '';
+    if (winner === 'tie') {
+        winnerMessage = "It's a tie!";
+    } else {
+        winnerMessage = (winner === myRole) ? 'You win!' : 'Opponent wins!';
+    }
 
-  resultDiv.innerHTML = `
-    You chose: ${p1Choice}<br>
-    Opponent chose: ${p2Choice}<br>
-    <strong>${winnerMessage}</strong>
-  `;
+    resultDiv.innerHTML = `
+        <p>You chose: <strong>${myChoice}</strong></p>
+        <p>Opponent chose: <strong>${oppChoice}</strong></p>
+        <h3 style="color: ${winnerMessage === 'You win!' ? 'green' : 'red'}">${winnerMessage}</h3>
+    `;
 
-<<<<<<< HEAD
-  // Fetch updated user stats
-=======
->>>>>>> 2cfe7e8 (Convert frontend submodule to regular folder)
-  try {
-    const response = await fetch(`http://localhost:3000/api/users/${currentUser.username}`);
-    const updatedUser = await response.json();
-    currentUser = updatedUser;
-    scoreDiv.innerHTML = `Wins: ${updatedUser.wins} | Losses: ${updatedUser.losses}`;
-  } catch (err) {
-    console.error('Failed to fetch updated stats:', err);
-  }
+    // Refresh stats from DB
+    try {
+        const response = await fetch(`http://localhost:3000/api/users/${currentUser.username}`);
+        const updatedUser = await response.json();
+        currentUser = updatedUser;
+        updateScoreDisplay(updatedUser.wins, updatedUser.losses);
+    } catch (err) {
+        console.error('Stats refresh failed:', err);
+    }
 });
 
-<<<<<<< HEAD
-// Handle opponent disconnect
 socket.on('opponentDisconnected', () => {
-  resultDiv.innerHTML = 'Opponent left the game. Please refresh to play again.';
-  currentRoom = null; // prevent further moves
+    resultDiv.innerHTML = '<b style="color:red">Opponent left the game.</b> Waiting for a new match...';
+    currentRoom = null;
 });
 
-// Handle connection errors
-=======
-// Opponent disconnect
-socket.on('opponentDisconnected', () => {
-  resultDiv.innerHTML = 'Opponent left the game. Please refresh to play again.';
-  currentRoom = null;
-});
-
-// Connection error
->>>>>>> 2cfe7e8 (Convert frontend submodule to regular folder)
 socket.on('connect_error', (err) => {
-  console.error('Connection error:', err.message);
-  alert('Cannot connect to server. Make sure the backend is running.');
+    console.error('Connection error:', err.message);
 });
