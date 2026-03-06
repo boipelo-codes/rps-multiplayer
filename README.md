@@ -3,7 +3,7 @@
 Welcome to **RGB Arena** – a full‑stack, real‑time multiplayer Rock Paper Scissors game!  
 Two players can connect, enter usernames, and play rounds instantly. Scores are persisted in a database, and the vibrant red‑green‑blue gradient theme makes the experience pop.
 
-![Game Screenshot](/game%20screenshot/screenshot.png) 
+![Game Screenshot](/frontend/game%20screenshot/screenshot.png) 
 
 ---
 
